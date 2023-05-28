@@ -18,9 +18,9 @@ public class Concoction extends Potion {
 
 	@Override  
 	public void useOn(MagicEffectRealization target) {
-	//if usages>0 reduce usages by 1 (tryUsage method) and
-	//change HP of target by health (call method heal(health) or takeDamage(health) depending on sign of health)
-	//change MP of target by mana (call method enforceMagic(magic) or wakenMagic(magic) depending on sign of magic)
-	//call cast Method for every spell in spells
+	// if usages >0 reduce usages by 1 ( tryUsage method ) and
+	// change HP of target by health ( call method heal ( health ) or takeDamage ( health ) depending on sign of health )
+	// change MP of target by mana ( call method enforceMagic ( magic ) or weakenMagic ( magic ) depending on sign of mana )
+	// call cast Method for every spell in spells
 	}
 }

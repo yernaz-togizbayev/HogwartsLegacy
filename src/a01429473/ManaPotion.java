@@ -6,7 +6,7 @@ public class ManaPotion extends Potion {
 	@Override
 	public String additionalOutputString() {
 	//returns "; +'mana' MP";
-	//e.g. (total result of toString) "[Mana Potion; 1 g; 2 Knuts; 1 gulp; +20 mana]"
+	//e.g. (total result of toString) "[Mana Potion; 1 g; 2 Knuts; 1 gulp; +20 MP]"
 	}
 
 	@Override  

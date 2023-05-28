@@ -29,9 +29,17 @@ public interface Trader {
 	boolean removeFromInventory(Tradeable item);
     //if item is null, an IllegalArgumentException must be thrown;
     //removes item from the inventory and returns true on success, false if removing the item failed
+	
+	default boolean canSteal ();
+	// returns true if the object is capable to steal ;
+	// default implementation always returns false
+	// this will be overridden for the class Wizard , so that only living
+	// Wizards can steal
+	
 
 	boolean steal(Trader thief);
     //if thief is null, an IllegalArgumentException must be thrown;
+	// if thief cannot steal ( canSteal returns false ) no action can be taken and false is returned
     //returns false if the object's inventory is empty
     //otherwise transfers a random item from the this object's inventory into the thief's inventory;
     //if the thief's inventory has not enough capacity, the object just vanishes and false is returned
@@ -42,6 +50,13 @@ public interface Trader {
     //default implementation always returns false
     //this will be overridden for the class Wizard, so that dead Wizards may be looted
 	}
+	
+	default boolean canLoot ();
+	// returns true if the object is capable to loot ;
+	// default implementation always returns false
+	// this will be overridden for the class Wizard , so that only living
+	// Wizards can loot
+	
 
 	boolean loot(Trader looter);
     //if looter is null, an IllegalArgumentException must be thrown;

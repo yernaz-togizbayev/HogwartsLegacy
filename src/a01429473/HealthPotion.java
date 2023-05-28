@@ -5,8 +5,8 @@ public class HealthPotion extends Potion {
 
 	@Override
 	public String additionalOutputString() {
-	//returns "; +'health' HP";
-	//e.g. (total result of toString) "[Health Potion; 1 g; 1 Knut; 5 gulps; +10 health]"
+	// returns "; + ’ health ’ HP ";
+	//e.g. ( total result of toString ) "[ Health Potion ; 1 g; 1 Knut ; 5 gulps ; +10 HP ]"
 	}
 
 	@Override  

@@ -21,7 +21,7 @@ public interface Tradeable {
 	default boolean purchase(Trader seller, Trader buyer) {
     //if seller or buyer is null or they are the same object, an IllegalArgumentException must be thrown;
     //default implementation checks if the seller has the object (possesses method), the buyer can afford the object (canAfford method) and the buyer has enough capacity in the inventory (hasCapacity). If any of these checks fail, the method returns false.
-    //Otherwise the seller pays the price (pay method), the buyer receives the price paid (earn method), The item is transferred from the seller's inventory to the buyer's inventory (transfer method) and the return value of the transfer call is returned
+    //Otherwise the buyer pays the price (pay method), the seller receives the price paid (earn method), The item is transferred from the seller's inventory to the buyer's inventory (transfer method) and the return value of the transfer call is returned
 	}
 
 	void useOn(MagicEffectRealization target);

@@ -60,7 +60,7 @@ public class Wizard implements MagicSource, Trader, MagicEffectRealization {
 
 	public boolean useRandomItem(MagicEffectRealization target) {
 	//if this object's inventory is empty, return false
-	//otherwise choose a random item from inventory and delegate to useItem(MagicItem, MagicEffectRealization)
+	//otherwise choose a random item from inventory and delegate to useItem(Tradeable, MagicEffectRealization)
 	}
 	  
 	public boolean sellItem(Tradeable item, Trader target) {
@@ -72,7 +72,7 @@ public class Wizard implements MagicSource, Trader, MagicEffectRealization {
 
 	public boolean sellRandomItem(Trader target) {
 	//if this object's inventory is empty, return false
-	//otherwise choose a random item from inventory and delegate to sellItem(MagicItem, MagicEffectRealization)
+	//otherwise choose a random item from inventory and delegate to sellItem(Tradeable, MagicEffectRealization)
 	}
 
 	@Override
@@ -147,10 +147,11 @@ public class Wizard implements MagicSource, Trader, MagicEffectRealization {
 	  
 	@Override
 	public boolean loot(Trader looter) {
-	//if looter is dead (isDead) no action can be taken and false is returned
-	//if the this object can be looted (isLootable), transfer all the items in the object's inventory into the looter's inventory; 
-	//items that don't fit in the looter's inventory because auf the weight limitation just vanish
-	//returns true if at least one item was successfully transferred, false otherwise
+	// if looter is null , IllegalArgumentException has to be thrown
+	// if looter cannot loot ( canLoot returns false ) no action can be taken and false is returned
+	// if the this object can be looted ( isLootable ), transfer all the items in the object ’s inventory into the looter ’s inventory ;
+	// items that don ’t fit in the looter ’s inventory because auf the weight limitation just vanish
+	// returns true if at least one item was successfully transferred , false otherwise
 	}
 	  
 	//MagicEffectRealization Interface
