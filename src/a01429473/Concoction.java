@@ -40,13 +40,13 @@ public class Concoction extends Potion {
 	}
 
 	/**
-	 * Returns "; '+/-''health' HP; '+/-''mana' MP; cast 'spells' ";
+	 * Returns "; '+/-''health' HP; '+/-''mana' MP; cast 'spells'";
 	 * here '+/-' denotes the appropriate sign, spells will be a bracketed list
 	 * of spells (Java default toString method for lists)
 	 * e.g. (total result of toString) "[My Brew; 2 g; 2 Knuts; 4 gulps; -5 HP; +10 MP; cast [[Confringo -20 HP], [Diffindo -15 HP]]]"
 	 * If health or mana is 0 or spells is empty, then the respective part(s) are suppressed
 	 * e. g. "[Your Brew; 2 g; 1 Knut; 1 gulp; +5 MP]
-	 * @return "; '+/-''health' HP; '+/-''mana' MP; cast 'spells' "
+	 * @return "; '+/-''health' HP; '+/-''mana' MP; cast 'spells'"
 	 */
 	@Override
 	public String additionalOutputString() {

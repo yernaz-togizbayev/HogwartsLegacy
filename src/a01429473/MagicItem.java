@@ -37,6 +37,12 @@ public abstract class MagicItem implements Tradeable, MagicEffectRealization, Ma
 		this.price = price;
 		this.weight = weight;
 	}
+
+	/**
+	 * Returns name of magic item
+	 * @return name of magic item
+	 */
+	public String getName() { return name; }
 	
 	/**
      * Returns value of usages (for access from deriving classes)
@@ -85,7 +91,7 @@ public abstract class MagicItem implements Tradeable, MagicEffectRealization, Ma
 	    			 additionalOutputString() +
 	    		"]";
 	}
-
+	
 	//Tradeable Interface:
 	
 	/**

@@ -78,10 +78,11 @@ public interface Tradeable {
 		if (!seller.possesses(this) || !buyer.canAfford(this.getPrice()) || !buyer.hasCapacity(this.getWeight()))
 			return false;
 		
-		if (buyer.pay(this.getPrice()) && seller.earn(this.getPrice()))
-				return transfer(seller, buyer);
-		
-		return false;
+		/*if (buyer.pay(this.getPrice()) && seller.earn(this.getPrice()))
+				return transfer(seller, buyer);*/
+		buyer.pay(this.getPrice());
+		seller.earn(this.getPrice());
+		return transfer(seller, buyer);
 	}
 
 	/**

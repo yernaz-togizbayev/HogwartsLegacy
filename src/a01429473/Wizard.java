@@ -1,5 +1,6 @@
 package a01429473;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -21,6 +22,7 @@ public class Wizard implements MagicSource, Trader, MagicEffectRealization {
 	private Set<AttackingSpell> protectedFrom; //not null, may be empty; use HashSet for instantiation
 	private int carryingCapacity; //not negative
 	private Set<Tradeable> inventory; //not null, may be empty, use HashSet for instantiation, total weight of inventory may never exceed carryingCapacity
+	private boolean isRaging = false;
 	
 	/**
 	 * @param name name
@@ -324,10 +326,7 @@ public class Wizard implements MagicSource, Trader, MagicEffectRealization {
 		if (this.isDead())
 			return false;
 		
-		if (item.purchase(this, target))
-			return true;
-		
-		return false;
+		return item.purchase(this, target);
 	}
 
 	/**
@@ -361,7 +360,7 @@ public class Wizard implements MagicSource, Trader, MagicEffectRealization {
 	 */ 
 	@Override
 	public String toString() {
-		return "[" + name + "(" + level.toString() + "): " + HP + "/" + basicHP + " " + MP + "/" + basicMP + "; " + money + " Knuts; knows " + knownSpells + "; carries " + inventory + "]";
+		return "[" + name + (isRaging ? " [raging] " : "") + "(" + level.toString() + "): " + HP + "/" + basicHP + " " + MP + "/" + basicMP + "; " + money + " Knuts; knows " + knownSpells + "; carries " + inventory + "]";
 	}
 	
 	//MagicSource Interface
@@ -377,6 +376,9 @@ public class Wizard implements MagicSource, Trader, MagicEffectRealization {
 	 */
 	@Override
 	public boolean provideMana(MagicLevel levelNeeded, int manaAmount) {
+		if (levelNeeded == null)
+			throw new IllegalArgumentException("levelNeeded may not be null");
+		
 		if (this.isDead())
 			return false;
 		
@@ -399,6 +401,9 @@ public class Wizard implements MagicSource, Trader, MagicEffectRealization {
 	 */
 	@Override
 	public boolean possesses(Tradeable item) {
+		if (item == null)
+			throw new IllegalArgumentException("item may not be null");
+		
 		if (inventory.contains(item))
 			return true;
 		return false;
@@ -411,6 +416,9 @@ public class Wizard implements MagicSource, Trader, MagicEffectRealization {
 	 */
 	@Override
 	public boolean canAfford(int amount) {
+		if (amount < 0)
+			throw new IllegalArgumentException("amount may not be negative");
+		
 		if (money >= amount)
 			return true;
 		return false;
@@ -423,6 +431,9 @@ public class Wizard implements MagicSource, Trader, MagicEffectRealization {
 	 */
 	@Override
 	public boolean hasCapacity(int weight) {
+		if (weight < 0)
+			throw new IllegalArgumentException("weight may not be negative");
+		
 		if (inventoryTotalWeight() + weight <= carryingCapacity)
 			return true;
 		return false;
@@ -437,6 +448,9 @@ public class Wizard implements MagicSource, Trader, MagicEffectRealization {
 	 */
 	@Override
 	public boolean pay(int amount) {
+		if (amount < 0)
+			throw new IllegalArgumentException("amount may not be negative");
+		
 		if(this.isDead())
 			return false;
 		
@@ -455,6 +469,9 @@ public class Wizard implements MagicSource, Trader, MagicEffectRealization {
 	 */
 	@Override
 	public boolean earn(int amount) {
+		if (amount < 0)
+			throw new IllegalArgumentException("amount may not be negative");
+		
 		if(this.isDead())
 			return false;
 		
@@ -471,9 +488,11 @@ public class Wizard implements MagicSource, Trader, MagicEffectRealization {
 	 */
 	@Override
 	public boolean addToInventory(Tradeable item) {
+		if (item == null)
+			throw new IllegalArgumentException("item may not be null");
+		
 		if (this.hasCapacity(item.getWeight())) {
-			inventory.add(item);
-			return true;
+			return inventory.add(item);
 		}
 		return false;
 	}
@@ -487,6 +506,9 @@ public class Wizard implements MagicSource, Trader, MagicEffectRealization {
 	 */
 	@Override
 	public boolean removeFromInventory(Tradeable item) {
+		if (item == null)
+			throw new IllegalArgumentException("item may not be null");
+		
 		return inventory.remove(item);
 	}
 	
@@ -564,16 +586,25 @@ public class Wizard implements MagicSource, Trader, MagicEffectRealization {
 		if (looter == null)
 			throw new IllegalArgumentException("looter may not be null");
 		
-		if (!canLoot())
+		if (!looter.canLoot())
 			return false;
 		
-		for (Tradeable item : inventory) {
-			if (!looter.hasCapacity(item.getWeight()))
-				return false;
-			looter.addToInventory(item);
+		boolean transferred = false;
+		if (this.isLootable()) {
+			List<Tradeable> itemsToRemove = new ArrayList<>();
+			
+		    for (Tradeable item : this.inventory) {
+		    	if (looter.hasCapacity(item.getWeight())) {
+		            if (looter.addToInventory(item)) {
+		            	transferred = true;
+		            	itemsToRemove.add(item);
+		            }
+			    }
+			}
+		    inventory.removeAll(itemsToRemove);
 		}
-		inventory.clear();
-		return true;
+		
+	    return transferred;
 	}
 	  
 	//MagicEffectRealization Interface
@@ -585,6 +616,9 @@ public class Wizard implements MagicSource, Trader, MagicEffectRealization {
 	 */
 	@Override
 	public void takeDamage(int amount) {
+		if (amount < 0)
+			throw new IllegalArgumentException("amount must not be negative");
+		
 		if(HP >= amount)
 			HP -= amount;
 		else
@@ -599,6 +633,9 @@ public class Wizard implements MagicSource, Trader, MagicEffectRealization {
 	 */
 	@Override
 	public void takeDamagePercent(int percentage) {
+		if (percentage < 0 || percentage > 100)
+			throw new IllegalArgumentException("percentage must be between 0 and 100");
+		
 		int damage = (int) Math.round(basicHP * (percentage / 100.0));
 		if (HP >= damage)
 			HP -= damage;
@@ -613,6 +650,9 @@ public class Wizard implements MagicSource, Trader, MagicEffectRealization {
 	 */
 	@Override
 	public void weakenMagic(int amount) {
+		if (amount < 0)
+			throw new IllegalArgumentException("amount must not be negative");
+		
 		if (MP >= amount)
 			MP -= amount;
 		else
@@ -627,6 +667,9 @@ public class Wizard implements MagicSource, Trader, MagicEffectRealization {
 	 */
 	@Override
 	public void weakenMagicPercent(int percentage) {
+		if (percentage < 0 || percentage > 100)
+			throw new IllegalArgumentException("percentage must be between 0 and 100");
+		
 		int magic = (int) Math.round(basicMP * (percentage / 100.0));
 		if (MP >= magic)
 			MP -= magic;
@@ -639,7 +682,11 @@ public class Wizard implements MagicSource, Trader, MagicEffectRealization {
 	 * @param amount amount to increase health
 	 */
 	@Override
-	public void heal(int amount) { HP += amount; }
+	public void heal(int amount) {
+		if (amount < 0)
+			throw new IllegalArgumentException("amount must not be negative");
+		HP += amount;
+	}
 	    
 	/**
 	 * Increase the object's HP by the percentage given of the object's
@@ -649,6 +696,9 @@ public class Wizard implements MagicSource, Trader, MagicEffectRealization {
 	 */
 	@Override
 	public void healPercent(int percentage) {
+		if (percentage < 0 || percentage > 100)
+			throw new IllegalArgumentException("percentage must be between 0 and 100");
+		
 		int health = (int) Math.round(basicHP * (percentage / 100.0));
 		HP += health;
 	}
@@ -658,7 +708,11 @@ public class Wizard implements MagicSource, Trader, MagicEffectRealization {
 	 * @param amount amount to increase mana
 	 */
 	@Override
-	public void enforceMagic(int amount) { MP += amount; }
+	public void enforceMagic(int amount) {
+		if (amount < 0)
+			throw new IllegalArgumentException("amount must not be negative");
+		MP += amount;
+	}
 	  
 	/**
 	 * Increase the object's MP by the percentage given of the object's
@@ -668,6 +722,9 @@ public class Wizard implements MagicSource, Trader, MagicEffectRealization {
 	 */
 	@Override
 	public void enforceMagicPercent(int percentage) {
+		if (percentage < 0 || percentage > 100)
+			throw new IllegalArgumentException("percentage must be between 0 and 100");
+		
 		int magic = (int) Math.round(basicMP * (percentage / 100.0));
 		MP += magic;
 	}
@@ -678,19 +735,55 @@ public class Wizard implements MagicSource, Trader, MagicEffectRealization {
 	 * @return true, if object is protected against spell s, false otherwise
 	 */
 	@Override
-	public boolean isProtected(Spell s) { return protectedFrom.contains(s); }
+	public boolean isProtected(Spell s) {
+		if (s == null)
+			throw new IllegalArgumentException("spell cannot be null");
+		return protectedFrom.contains(s);
+	}
 	
 	/**
 	 * Add all spells from attacks to instance variable protectedFrom
 	 * @param attacks spells against which protection is provided
 	 */
 	@Override
-	public void setProtection(Set<AttackingSpell> attacks) { protectedFrom.addAll(attacks); }
+	public void setProtection(Set<AttackingSpell> attacks) {
+		if (attacks == null)
+			throw new IllegalArgumentException("attacks may not be null");
+		
+		protectedFrom.addAll(attacks);
+	}
 
 	/**
 	 * Remove all spells from attacks from instance variable protectedFrom
 	 * @param attacks spells against which protection is removed 
 	 */
 	@Override
-	public void removeProtection(Set<AttackingSpell> attacks) { protectedFrom.removeAll(attacks); }
+	public void removeProtection(Set<AttackingSpell> attacks) {
+		if (attacks == null)
+			throw new IllegalArgumentException("attacks may not be null");
+		
+		protectedFrom.removeAll(attacks);
+	}
+
+	public int getHP() { return HP; }
+	
+	public String getName() { return name; }
+
+	public MagicLevel getLevel() { return level; }
+
+	public int getBasicHP() { return basicHP; }
+
+	public int getBasicMP() { return basicMP; }
+
+	public int getMP() { return MP; }
+
+	public int getMoney() { return money; }
+
+	public Set<Spell> getKnownSpells() { return knownSpells; }
+
+	public Set<AttackingSpell> getProtectedFrom() { return protectedFrom; }
+
+	public int getCarryingCapacity() { return carryingCapacity; }
+
+	public Set<Tradeable> getInventory() { return inventory; }
 }

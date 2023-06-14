@@ -64,4 +64,10 @@ public abstract class Spell {
 	public String toString() {
 		return "[" + name + "(" + levelNeeded.toString() + "): " + manaCost + " mana" + additionalOutputString() + "]";
 	}
+
+	public String getName() { return name; }
+
+	public int getManaCost() { return manaCost; }
+
+	public MagicLevel getLevelNeeded() { return levelNeeded; }
 }

@@ -12,6 +12,16 @@ public class HealthPotion extends Potion {
 	 * @param usages number of usages still left
 	 * @param price price
 	 * @param weight weight
+	 */
+	public HealthPotion(String name, int usages, int price, int weight) {
+		super(name, usages, price, weight);
+	}
+	
+	/**
+	 * @param name name
+	 * @param usages number of usages still left
+	 * @param price price
+	 * @param weight weight
 	 * @param health change of health on consumer
 	 */
 	public HealthPotion(String name, int usages, int price, int weight, int health) {
@@ -30,9 +40,7 @@ public class HealthPotion extends Potion {
 	 */
 	@Override
 	public String additionalOutputString() {
-		// returns "; + ’ health ’ HP ";
-		//e.g. ( total result of toString ) "[ Health Potion ; 1 g; 1 Knut ; 5 gulps ; +10 HP ]"
-		return "; +" + health + " HP ";
+		return "; +" + health + " HP";
 	}
 
 	/**
@@ -42,9 +50,13 @@ public class HealthPotion extends Potion {
 	 */
 	@Override  
 	public void useOn(MagicEffectRealization target) {
-		//if usages>0 reduce usages by 1 (tryUsage method) and
-		//increase HP of target by health (call method heal(health)
 		if (tryUsage())
 			target.heal(health);
 	}
+
+	/**
+	 * Returns health of consumer
+	 * @return health of consumer
+	 */
+	public int getHealth() { return health; }
 }
